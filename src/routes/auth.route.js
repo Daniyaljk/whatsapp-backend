@@ -9,6 +9,10 @@ router.post("/register",register)
 router.post("/login",login)
 router.post("/logout",logout)
 router.post("/refresh_token",refreshToken)
-router.get("/testing_auth_middleware",authMiddleware)
+router.get("/testing_auth_middleware",authMiddleware,(req,res)=>{
+    res.status(201).json({
+        message: "auth middleware"
+    })
+})
 
 export default router;

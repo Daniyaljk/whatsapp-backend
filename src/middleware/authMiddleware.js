@@ -1,23 +1,26 @@
 import jwt from "jsonwebtoken";
 
-export default async function (req, res) {
+export default async function (req, res, next) {
     const bearerToken = req.headers["authorization"]
 
     if (bearerToken) {
         const token = bearerToken.split(' ')[1]
 
-       try{
-           const test = jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
+        try {
+            jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
+                if (err) {
+                    console.log(err);
+                }
 
-           console.log(req.user)
-           res.status(201).json({
-               message: "auth middleware"
-           })
-       }catch (err){
-           res.status(401).json({
-               message: "dont match token"
-           })
-       }
+                req.user = payload
+            })
+
+            next()
+        } catch (err) {
+            res.status(401).json({
+                message: "dont match token"
+            })
+        }
 
     } else {
         res.status(401).json({
